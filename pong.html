@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Pong</title>
+        <link rel="stylesheet" href="index.css"> 
+        <script src="https://cdn.jsdelivr.net/processing.js/1.4.8/processing.min.js"></script>
+        <link rel="shortcut icon" href="repl_logo.png"/>
+    </head>
+    <body>
+        
+        <h1>Pong</h1>
+        </br>
+        
+        <input type="button" onclick="history.back();" value="Go Back To Games">
+        
+        </br>
+        </br>
+        <p>Instructions</p> 
+        <ul  style="list-style-type:square;">
+        <li>Use the 'w' and 's' keys to move up and down for player 1</li>
+        <li>Use the up and down arrow keys to move up and down for player 2</li>
+        <li>When you play singleplayer, you are player 1</li>
+        </ul>
+        <canvas id="mycanvas" > </canvas>
+        
+        <script>
+
+    var sketchProc = function(processingInstance) {
+        with (processingInstance) {
+
+            //~~~~ VARIABLES ~~~~\\
+var player1 = {
+  x: 10,
+  y: 200,
+  w: 15,
+  h: 100,
+  spd: 3,
+  up: false,
+  down: false
+};
+var player2 = {
+  x: 475,
+  y: 200,
+  w: 15,
+  h: 100,
+  spd: 3,
+  up: false,
+  down: false
+};
+
+var ball = {
+  x: 250,
+  y: 250,
+  w: 10,
+  h: 10,
+  spdx: floor(random(-5, 5)),
+  spdy: random(-5, 5)
+};
+
+var score1 = 0;
+var score2 = 0;
+
+var gameLose = false;
+
+var players = 0;
+
+var pause = false;
+
+var easy = false;
+var medium = false;
+var hard = false;
+
+var startScreen = true;
+var chooseLevel = false;
+var tutorialScreen = false;
+
+
+//~~~~ V ~~~~\\
+
+
+
+//~~~~ PROGRAM ~~~~\\
+
+var setup = function() {
+   size(500,500);
+  
+    player1 = {
+      x: 10,
+      y: 200,
+      w: 15,
+      h: 100,
+      spd: 6,
+      up: false,
+      down: false
+    };
+    player2 = {
+      x: 475,
+      y: 200,
+      w: 15,
+      h: 100,
+      spd: 6,
+      up: false,
+      down: false
+    };
+    
+    ball = {
+      x: 250,
+      y: 250,
+      w: 15,
+      h: 15,
+      spdx: floor(random(-5, 5)),
+      spdy: floor(random(-1, 1))
+    };
+      
+    if(ball.spdx === 0) {
+            ball.spdx = floor(random(-5,-5))
+        }
+    
+};
+
+var draw = function(){
+  if (startScreen && !gameLose) {
+    drawGameStart();
+  } else if (tutorialScreen && !gameLose) {
+    drawTutorialScreen();
+  } else if (chooseLevel && !gameLose) {
+    drawSinglePlayerLevel();
+  } else if (score1 > 4 || score2 > 4) {
+    drawGameWin();
+  } else {
+    if (pause) {
+      return;
+    }
+    doGame();
+  }
+};
+//~~~~ P ~~~~\\
+
+
+
+//~~~~ FUNCTIONS ~~~~\\
+
+function doGame() {
+  background(0); 
+  halfLine();
+            
+  drawPlayers();
+  drawBall();
+  movePlayers();
+  moveBall();
+        
+  drawScore();
+}
+
+function halfLine() {
+  
+  for (var h = 0; h < 13; h++) {
+    fill(255);
+    rect(245, 40 * h, 10, 20);
+  }
+  
+  fill(135,135,135);
+  rect(235, 15, 30, 30)
+  
+  fill(255,255,255);
+  rect(237, 17, 26, 26);
+  
+  fill(120,120,120);
+  rect(240, 19, 7, 22);
+  
+  rect(252, 19, 7, 22);
+}
+
+function drawGameStart() {
+    background(0,255,255);
+    
+    textSize(40);
+    fill(0)
+    text("Pong", 200, 50);
+    
+    noStroke();
+    fill(200);
+    rect(96,196,308,78);
+    
+    fill(255);
+    rect(100,200,300,70);
+
+    fill(100);
+    text("Play Multiplayer", 112, 252);
+    fill(0);
+    text("Play Multiplayer", 110, 250);
+    
+        fill(200);
+    rect(86,296,328,78);
+    
+    fill(255);
+    rect(90,300,320,70);
+
+    fill(100);
+    text("Play Singleplayer", 97, 352);
+    fill(0);
+    text("Play Singleplayer", 95, 350);
+    
+        score1 = 0;
+    score2 = 0;
+
+}
+
+function drawGameWin() {
+    background(255,68,68);
+    
+    gameLose = true;
+    
+    textSize(40);
+    fill(0)
+    if(score1 > 4) {
+      text("Player 1 wins!", 100, 50);
+    } else if(score2 > 4) {
+      text("Player 2 wins!", 100, 50);
+    }
+    
+    
+    noStroke();
+    fill(200);
+    rect(96,196,308,78);
+    fill(255);
+    rect(100,200,300,70);
+    
+    fill(0);
+    text("Play Again", 120, 250);
+    
+    easy = false;
+    medium = false;
+    hard = false;
+
+}
+
+function drawTutorialScreen () {
+  background(255,0,0);
+}
+
+function drawSinglePlayerLevel() {
+    background(0,255,255);
+    
+    textSize(40);
+    text("Choose your difficulty level", 10, 50)
+    
+        noStroke();
+        
+    //Easy Button
+    fill(200);
+    rect(96,96,308,78);
+    
+    fill(255);
+    rect(100,100,300,70);
+    
+    fill(100);
+    text("Easy", 200, 152);
+    fill(0);
+    text("Easy", 198, 150);
+
+    stroke(255,0,0);
+    strokeWeight(10);
+    
+    noStroke();
+    //Medium Button
+    fill(200);
+    rect(96,196,308,78);
+    
+    fill(255);
+    rect(100,200,300,70);
+
+    fill(100);
+    text("Medium", 182, 252);
+    fill(0);
+    text("Medium", 180, 250);
+    
+    //Hard Button
+    fill(200);
+    rect(86,396,328,78);
+    
+    fill(255);
+    rect(90,400,320,70);
+
+    fill(100);
+    text("Hard", 200, 452);
+    fill(0);
+    text("Hard", 198, 450);
+}
+
+function drawPlayers() {
+  //player 1
+  fill(255,0,0);
+  rect(player1.x, player1.y, player1.w, player1.h)
+  
+  //player 2
+  fill(0,0,255);
+  rect(player2.x, player2.y, player2.w, player2.h)
+}
+
+function drawBall() {
+//   ellipseMode(CORNER);
+  fill(255);
+  rect(ball.x, ball.y, ball.w, ball.h)
+}
+
+function drawScore() {
+  textSize(25);
+  fill(255,0,0);
+  text("P1: " + score1, 10, 25);
+  
+  fill(0,0,255);
+  text("P2: " + score2, 420, 25);
+}
+
+function movePlayers() {
+ 
+
+      // up player 1
+      
+      if(player1.up && player1.y > -1) {
+        player1.y -= player1.spd;
+      }
+      //down player 1
+      if(player1.down && player1.y < 500 - player1.h) {
+        player1.y += player1.spd;
+      }
+
+    // // up player 2 Hard
+    //     if(ball.y > player1.y + 50 && player1.y < 500 - player1.h){                  // Ball above Player
+    //         player1.y += player1.spd       // GO Up
+    //     }
+    //     //down player 2 Hard
+    //     if(ball.y < player1.y + 50 && player1.y > -1){                    // Ball below Player
+    //         player1.y -= player1.spd     // GO Down
+    //     }
+      
+  
+  if (players === 2) {
+          // up player 2
+          if(player2.up && player2.y > -1) {
+            player2.y -= player2.spd;
+          }
+          //down player 2
+          if(player2.down && player2.y < 500 - player2.h) {
+            player2.y += player2.spd;
+          }
+  } else if (players === 1) {
+    if (hard) {
+        // up player 2 Hard
+        if(ball.y > player2.y + 50 && player2.y < 500 - player2.h){                  // Ball above Player
+            player2.y += player2.spd       // GO Up
+        }
+        //down player 2 Hard
+        if(ball.y < player2.y + 50 && player2.y > -1){                    // Ball below Player
+            player2.y -= player2.spd     // GO Down
+        }
+    } else if (medium) {
+        // up player 2 Medium
+        if(ball.y > player2.y + 50 && player2.y < 500 - player2.h && ball.x > 250){                  // Ball above Player
+            player2.y += player2.spd       // GO Up
+        }
+        //down player 2 Medium
+        if(ball.y < player2.y + 50 && player2.y > -1 && ball.x > 250){                    // Ball below Player
+            player2.y -= player2.spd     // GO Down
+        }
+    } else if (easy) {
+        // up player 2 Easy
+        if(ball.y > player2.y + 50 && player2.y < 500 - player2.h && ball.x > 375){                  // Ball above Player
+            player2.y += player2.spd       // GO Up
+        }
+        //down player 2 Easy
+        if(ball.y < player2.y + 50 && player2.y > -1 && ball.x > 375){                    // Ball below Player
+            player2.y -= player2.spd     // GO Down
+        }
+    }
+  }
+}
+
+function moveBall() {
+    
+
+      ball.x += ball.spdx;
+      ball.y += ball.spdy;
+      
+      if (ball.x > 500 - ball.w && score1 < 5 && score2 < 5) {
+        setup();
+        score1++;
+      }
+      if (ball.x < 0 - ball.h && score1 < 5 && score2 < 5) {
+        setup();
+        score2++;
+      }
+      
+      if (ball.x > 500 - ball.w && score1 > 4 && score2 > 4) {
+        score1++;
+        gameLose = true;
+      }
+      if (ball.x < 0 - ball.h && score1 > 4 && score2 > 4) {
+        score2++;
+      }
+      
+      if (ball.y > 500) {
+        ball.spdy *= -1;
+      }
+      if (ball.y < 0) {
+        ball.spdy *= -1;
+      }
+      
+      if (collision(player1, ball)) {
+        ball.spdx *= -1;
+        ball.spdx += 0.5;
+        
+        if (ball.y - player1.y < 11) {
+            ball.spdy -= 2.5;
+        }
+        if (ball.y - player1.y < 21 && ball.y - player1.y > 10) {
+            ball.spdy -= 1.5;
+        }
+        if (ball.y - player1.y < 31 && ball.y - player1.y > 20) {
+            ball.spdy -= 0.5;
+        }
+        
+        if (ball.y - player1.y > 89) {
+            ball.spdy += 2.5;
+        }
+        if (ball.y - player1.y > 79 && ball.y - player1.y < 90) {
+            ball.spdy += 1.5;
+        }
+        if (ball.y - player1.y > 69 && ball.y - player1.y < 80) {
+            ball.spdy += 0.5;
+        }
+      }
+      if (collision(player2, ball)) {
+        ball.spdx *= -1;
+        ball.spdx -= 0.5;
+        
+        if (ball.y - player2.y < 11) {
+            ball.spdy -= 2.5;
+        }
+        if (ball.y - player2.y < 21 && ball.y - player1.y > 10) {
+            ball.spdy -= 1.5;
+        }
+        if (ball.y - player2.y < 31 && ball.y - player1.y > 20) {
+            ball.spdy -= 0.5;
+        }
+        
+        if (ball.y - player2.y > 89) {
+            ball.spdy += 2.5;
+        }
+        if (ball.y - player2.y > 79 && ball.y - player1.y < 90) {
+            ball.spdy += 1.5;
+        }
+        if (ball.y - player2.y > 69 && ball.y - player1.y < 80) {
+            ball.spdy += 0.5;
+        }
+      
+
+    }  
+  
+}
+
+//~~~~ F ~~~~ \\
+
+function collision(obj1, obj2) {
+  if ( obj1.x + obj1.w > obj2.x &&
+        obj1.x < obj2.x + obj2.w &&
+        obj2.y + obj2.h > obj1.y &&
+        obj2.y < obj1.y + obj1.h ) {
+      return true;
+  } else {
+      return false;
+  }
+}
+
+var keyPressed = function() {
+  if(keyCode === UP) {
+    player2.up = true;
+  }
+  
+  if(keyCode === DOWN) {
+    player2.down = true;
+  }
+  
+  if(keyCode === 87) {
+    player1.up = true;
+  }
+  
+  if(keyCode === 83) {
+    player1.down = true;
+  }
+};
+
+var keyReleased = function() {
+  if(keyCode === UP) {
+    player2.up = false;
+  }
+  
+  if(keyCode === DOWN) {
+    player2.down = false;
+  }
+  
+  if(keyCode === 87) {
+    player1.up = false;
+  }
+  
+  if(keyCode === 83) {
+    player1.down = false;
+  }
+};
+
+var PlayerAI = function() {
+   
+}
+
+var mouseClicked = function() {
+
+  // Multiplayer
+  if(setMouseClick(mouseX,mouseY,100,200,300,70) && startScreen) {
+    startScreen = false;
+    players = 2;
+    console.log("asdf")
+  }
+
+  // Restart
+  if(setMouseClick(mouseX,mouseY,100,200,300,70) && gameLose) {
+    startScreen = true;
+    gameLose = false;
+  }
+  
+  // Singleplayer
+  if(setMouseClick(mouseX,mouseY,90,300,320,70) && startScreen) {
+      console.log("hi")
+      startScreen = false;
+      chooseLevel = true;
+      players = 1;
+      
+  }
+  //Level Easy
+  if(setMouseClick(mouseX,mouseY,100,100,300,70) && chooseLevel) {
+    easy = true;
+    chooseLevel = false;
+    console.log("easy: " + easy);
+    console.log("medium: " + medium);
+    console.log("hard: " + hard);
+  }
+  //Level Medium
+  if(setMouseClick(mouseX,mouseY,100,200,300,70) && chooseLevel) {
+    medium = true;
+    chooseLevel = false;
+    console.log("easy: " + easy);
+    console.log("medium: " + medium);
+    console.log("hard: " + hard);
+  }
+  // Level Hard
+  if(setMouseClick(mouseX,mouseY,100,400,300,70) && chooseLevel) {
+      hard = true;
+      chooseLevel = false;
+      console.log("easy: " + easy);
+      console.log("medium: " + medium);
+      console.log("hard: " + hard);
+  }
+  
+  // Pause
+  if(setMouseClick(mouseX,mouseY,235,15,30,30)) {
+      if(pause) {
+         pause = false
+      } else {
+            pause = true;
+            fill (30,30,30);
+            rect(width/2 - 100, height/2 - 50, 200,100);
+            fill(0, 255, 0);
+            textSize(32);
+            text("PAUSED", 190, 260)
+            console.log("2");
+      }
+  }
+};
+
+function setMouseClick (mouseX,mouseY,x,y,w,h) {
+  if (mouseX > x-1 && mouseX < x+w+1 && mouseY > y-1 && mouseY < y+h+1) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+        }
+    }
+
+    var canvas = document.getElementById("mycanvas"); 
+    var processingInstance = new Processing(canvas, sketchProc); 
+
+</script>
+    </body>
+</html>

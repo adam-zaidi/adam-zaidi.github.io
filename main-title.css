@@ -1,0 +1,54 @@
+.gameimg {
+  width: 24%;
+}
+
+.container {
+  position: relative;
+  width: 99%;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 338px;
+  width: 338px;
+  opacity: 0;
+  transition: .5s ease;
+  background-color: #FFFFFF;
+}
+
+.container:hover .overlay {
+  opacity: 1;
+}
+
+.text {
+  color: #008CBA;
+  font-size: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  text-align: center;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+#leftblock {
+  float: left;
+}
+
+#leftmiddleblock {
+  float: right;
+}
+
+#rightmiddleblock {
+  float: left;
+}
+
+#rightblock {
+  float: right;
+}

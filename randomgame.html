@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Random Game</title>
+        <link rel="stylesheet" href="index.css"> 
+        <script src="https://cdn.jsdelivr.net/processing.js/1.4.8/processing.min.js"></script>
+        <link rel="shortcut icon" href="repl_logo.png"/>
+    </head>
+    <body>
+        
+        <h1>Random Game</h1>
+        </br>
+        
+        <a href="gamings.html">Go Back to Games</a>
+        
+        </br>
+        </br>
+        
+        <canvas id="mycanvas" > </canvas>
+        
+        <script>
+
+    var sketchProc = function(processingInstance) {
+        with (processingInstance) {
+
+size(1000,500);
+
+var left = false;
+var right = false;
+var up = false;
+
+
+
+var gravity = 3;
+var fallAcceleration = 0.11;
+var jumpHeight = -7.5;
+
+var jumping = false;
+var hitStructures = false;
+
+var playerImage;
+
+var speed = 20;
+
+var player = {x: 230, y: 440, w: 30, h: 30};
+
+var walls = [
+  {x: 0, y: 470, w: 1000, h: 30}
+  ];
+  
+var structures = [
+  {x: 500, y: 300, w: 500, h: 30},
+  {x: 500, y: 330, w: 30, h: 60},
+  {x: 700, y: 200, w: 30, h: 100}
+  ];
+  
+var numOfStructures = structures.length;
+  
+// var flowers = [
+//   {x: 10, y: 480, w: 10, h: 10}
+//   ];
+
+var draw = function() {
+  
+  
+  background(69,4,29);
+  
+//   playerImage = loadImage("player.png");
+  
+  noStroke();
+  fill(171, 0, 255);
+  fill(0,0,255);
+  rect(walls[0].x, walls[0].y, walls[0].w, walls[0].h);
+  
+  movePlayer(player,walls);
+  drawPlayer();
+  drawStructures();
+  moveStructures();
+  // drawFlowers();
+};
+
+var drawStructures = function () {
+  for (var a = 0; a < structures.length; a++) {
+  fill(255,100,0);
+  rect(structures[a].x,
+        structures[a].y,
+        structures[a].w,
+        structures[a].h);
+  }
+};
+
+var drawFlowers = function () {
+  for (var yi = 0; yi < 100; yi++) {
+  fill(0,255,0);
+  rect(flowers[yi].x,
+        flowers[yi].y,
+        flowers[yi].w,
+        flowers[yi].h);
+  
+  }
+};
+
+var drawPlayer = function() {
+    fill(154,0,255)
+//   image(playerImage, player.x, player.y, player.w, player.h);
+    rect(player.x, player.y, player.w, player.h);
+};
+
+var movePlayer = function(player,walls) {
+
+  
+  for (var v = 0; v < walls.length; v++) {
+    while (collision(walls[v], player)) {
+      player.y = player.y - 2;
+    }
+    
+
+    
+  }
+  
+  if (up === true) {
+    gravity = jumpHeight;   
+    jumping = true;
+  }
+  
+  if (jumping === true) {
+    player.y += gravity;
+    gravity += fallAcceleration; 
+  }
+  
+  if (player.y > 439) {
+    jumping = false;
+  }
+  
+  var buffer = (gravity > -0.4 && gravity < 0.4);
+  
+  if (gravity < 0) {
+    for (var j = 0; j < structures.length; j++) {                        
+      while (collision(player,structures[j])) {
+        gravity = 3;
+        player.y += gravity;
+      }
+    }
+  }
+  
+
+  
+    if (gravity > 0) {
+      for (var h = 0; h < structures.length; h++) {                        
+        while (collision(player,structures[h])) {
+          player.y -= 0.01;
+        }
+      }
+    }
+
+  if (left === true) {
+   for (var s = 0; s < structures.length; s++) {                        
+      while (collision(player,structures[s]) && !buffer) {
+        player.x += 0.01;
+      }
+    if (buffer) {
+      player.x -= 2;
+    }
+    }
+  }
+  
+  if (right === true) {
+   for (var c = 0; c < structures.length; c++) {                        
+      while (collision(player,structures[c])) {
+        player.x -= 0.01;
+      }
+    }
+  }
+
+};
+
+var moveStructures = function() {
+  if (left === true) {
+    for(var da = 0; da < structures.length; da++) {
+      structures[da].x += 5;
+    }
+  }
+  
+  if (right === true) {
+    for(var ra = 0; ra < structures.length; ra++) {
+      structures[ra].x -= 5;
+    } 
+  }
+  
+
+  
+  
+  
+};
+
+var collision = function (obj1, obj2) {
+
+  if (obj1.x + obj1.w > obj2.x &&
+    obj1.x < obj2.x + obj2.w &&
+    obj2.y + obj2.h > obj1.y &&
+    obj2.y < obj1.y + obj1.h) {
+    return true;
+  } else {
+    return false;
+  }
+
+};
+
+// var collision2 = function (obj1, obj2) {
+  
+//   if (obj1.x + obj1.w > obj2.x &&
+//   obj1.x < obj2.x + obj2.w &&
+//   obj1.y > obj2.y &&
+//   obj1.y < obj2.y + obj2.w) {
+//     return true; 
+//   } else {
+//     return false;
+//   }
+  
+// }
+
+var keyPressed = function () {
+  if (keyCode == LEFT) {
+    left = true;
+  }
+  if (keyCode == RIGHT) {
+    right = true;
+  }
+  if (keyCode == UP) {
+    up = true;
+  }
+}
+var keyReleased = function () {
+  if (keyCode == LEFT) {
+    left = false;
+  }
+  if (keyCode == RIGHT) {
+    right = false;
+  }
+  if (keyCode == UP) {
+    up = false;
+  }
+}
+
+      }
+    }
+
+    var canvas = document.getElementById("mycanvas"); 
+    var processingInstance = new Processing(canvas, sketchProc); 
+
+</script>
+    </body>
+</html>

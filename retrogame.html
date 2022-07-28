@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Retro Game</title>
+        <link rel="stylesheet" href="index.css"> 
+        <script src="https://cdn.jsdelivr.net/processing.js/1.4.8/processing.min.js"></script>
+        <link rel="shortcut icon" href="repl_logo.png"/>
+    </head>
+    <body>
+        
+        <h1>Retro Game</h1>
+        </br>
+        
+        <a href="gamings.html">Go Back to Games</a>
+        
+        </br>
+        </br>
+        
+        <canvas id="mycanvas" > </canvas>
+        
+        <script>
+
+    var sketchProc = function(processingInstance) {
+        with (processingInstance) {
+
+size(1200,1200);
+//Variables
+
+
+
+
+var q = 1;
+var x = 100;
+var y = 100;
+
+var up = 0;
+var down = 0;
+var left = 0;
+var right = 0;
+
+
+
+var speed = 7;
+
+ var walls = [{x: 0, y: 0, w: 50, h: 1200},
+              {x: 0, y: 0, w: 1200, h: 50},
+              {x: 1150, y: 0, w: 50, h: 1200},
+              {x: 0, y: 1150, w: 1200, h: 50},
+              {x: 50, y: 120, w: 260, h: 50},
+              {x: 210, y: 230, w: 50, h: 300},
+              {x: 110, y: 230, w: 150, h: 50},
+              {x: 105, y: 230, w: 50, h: 300},
+              {x: 380, y: 50, w: 50, h: 275},
+              {x: 380, y: 385, w: 50, h: 320},
+              {x: 50, y: 690, w: 200, h: 50},
+              {x: 310, y: 690, w: 300, h: 50},
+              {x: 500, y: 100, w: 50, h: 520},
+              {x: 0, y: 800, w: 400, h: 50},
+              {x: 470, y: 800, w: 200, h: 50},
+              {x: 350, y: 850, w: 50, h: 150}
+              ];
+
+
+ var gold = [{x: 165, y: 197, w: 10, h: 10, show: 1},
+            {x: 230, y: 197, w: 10, h: 10, show: 1},
+            {x: 197, y: 197, w: 10, h: 10, show: 1},
+            {x: 320, y: 250, w: 10, h: 10, show: 1},
+            {x: 320, y: 280, w: 10, h: 10, show: 1},
+            {x: 320, y: 310, w: 10, h: 10, show: 1},
+            {x: 177, y: 295, w: 10, h: 10, show: 1},
+            {x: 177, y: 320, w: 10, h: 10, show: 1},
+            {x: 320, y: 340, w: 10, h: 10, show: 1},
+            {x: 75, y: 370, w: 10, h: 10, show: 1},
+            {x: 75, y: 400, w: 10, h: 10, show: 1},
+            {x: 75, y: 430, w: 10, h: 10, show: 1},
+            {x: 75, y: 460, w: 10, h: 10, show: 1},
+            {x: 75, y: 600, w: 10, h: 10, show: 1},
+            {x: 105, y: 600, w: 10, h: 10, show: 1},
+            {x: 135, y: 600, w: 10, h: 10, show: 1},
+            {x: 165, y: 600, w: 10, h: 10, show: 1},
+            {x: 195, y: 600, w: 10, h: 10, show: 1},
+            {x: 225, y: 600, w: 10, h: 10, show: 1},
+            {x: 255, y: 600, w: 10, h: 10, show: 1},
+            {x: 285, y: 600, w: 10, h: 10, show: 1},
+            {x: 315, y: 600, w: 10, h: 10, show: 1},
+            {x: 345, y: 600, w: 10, h: 10, show: 1},
+            {x: 460, y: 600, w: 10, h: 10, show: 1},
+            {x: 460, y: 570, w: 10, h: 10, show: 1},
+            {x: 460, y: 540, w: 10, h: 10, show: 1},
+            {x: 460, y: 510, w: 10, h: 10, show: 1},
+            {x: 460, y: 480, w: 10, h: 10, show: 1},
+            {x: 460, y: 450, w: 10, h: 10, show: 1},
+            {x: 460, y: 420, w: 10, h: 10, show: 1},
+            {x: 460, y: 300, w: 10, h: 10, show: 1},
+            {x: 460, y: 270, w: 10, h: 10, show: 1},
+            {x: 460, y: 240, w: 10, h: 10, show: 1},
+            {x: 460, y: 210, w: 10, h: 10, show: 1},
+            {x: 460, y: 180, w: 10, h: 10, show: 1},
+            {x: 460, y: 150, w: 10, h: 10, show: 1},
+            {x: 460, y: 120, w: 10, h: 10, show: 1}];
+             
+var player = {x: 60, y: 60, w: 50, h: 50};
+
+var goldPoints = 0;
+var tries = 0;
+
+var bouncers = [{x: 440, y: 500, w: 50, h: 50, spd: 1, axis: "vert"},
+                {x: 100, y: 575, w: 50, h: 50, spd: 1, axis: "hor"}];
+
+var drawTries = function () {
+  fill(255, 255, 255);
+  textSize(50);
+  text("Tries: " + tries, 950, 1190);
+};
+var drawBouncers = function () {
+  for (var a = 0; a < bouncers.length; a = a + 1) {
+  fill(160, 32, 240);
+  rect(bouncers[a].x,
+        bouncers[a].y,
+        bouncers[a].w,
+        bouncers[a].h);
+  }
+};
+var drawGold = function() {
+  for (var e = 0; e < gold.length; e = e + 1) {
+    
+      if (gold[e].show === 0) {
+        fill(0, 255, 0);
+      } else {
+        fill(255,255,0);
+      }
+      
+  rect(gold[e].x,
+    gold[e].y,
+    gold[e].w,
+    gold[e].h);
+}
+};
+var drawGoldText = function() {
+  fill(255, 255, 255);
+  textSize(50);
+  text("Gold: " + goldPoints, 10, 1190);
+};
+var drawPlayer = function() {
+    fill(255, 0, 0);
+  rect(player.x, player.y, player.w, player.h);
+};
+var drawWalls = function() {
+for (var i = 0; i < walls.length; i = i + 1) {
+  rect(walls[i].x,
+    walls[i].y,
+    walls[i].w,
+    walls[i].h);
+}
+};
+
+var moveBouncers = function() {
+
+        
+        for (var a = 0; a < bouncers.length; a++) {
+          for(var i = 0; i < walls.length; i++) {
+            if (collision(bouncers[a],walls[i])) {
+              bouncers[a].spd = bouncers[a].spd * -1;
+            }
+          }
+          if(collision(bouncers[a],player)) {
+              reset(player);
+                for(var e = 0; e < gold.length; e++) {
+                  gold[e].show =1;
+                }
+              for(var j = 0; j < q; j++) {
+                tries = tries + 1;
+              }
+          }
+        }
+        
+    for (a = 0; a < bouncers.length; a++) {
+    if (bouncers[a].axis === "hor") {
+      bouncers[a].x = bouncers[a].x + bouncers[a].spd;
+    } else if (bouncers[a].axis === "vert") {
+      bouncers[a].y = bouncers[a].y + bouncers[a].spd;
+      }
+    } 
+
+};
+  
+
+var draw = function() {
+background(0, 255, 0);
+
+noStroke();
+
+fill(0,0,255);
+
+drawWalls();
+drawGold();
+drawBouncers();
+
+drawPlayer();
+
+drawGoldText();
+
+moveBouncers();
+move(player,speed);
+
+drawTries();
+
+fill(0,0,0);
+textSize(50);
+text("yo");
+
+};
+
+
+var reset = function(player) {
+  goldPoints = 0;
+  player.x = 60;
+  player.y = 60;
+};
+
+var move = function(player,speed) {
+  if (up == 1) {
+    player.y = player.y - speed; 
+    
+    for (var i = 0; i < walls.length; i++) {                        
+      while (collision(player,walls[i])) {
+        player.y = player.y + 1;
+      }
+    }
+  }
+  
+  if (down == 1) {                               
+    player.y = player.y + speed;
+    
+    for (i = 0; i < walls.length; i++) {
+      while (collision(player,walls[i])) {
+        player.y = player.y - 1;
+      }
+    }
+  }
+  
+  if (left == 1) {
+    player.x = player.x - speed;
+        
+    for (i = 0; i < walls.length; i++) {
+      while (collision(player,walls[i])) {
+        player.x = player.x + 1;
+      }
+    }
+  }
+  
+  if (right == 1) {
+    player.x = player.x + speed;
+            
+    for (i = 0; i < walls.length; i++) {
+      while (collision(player,walls[i])) {
+        player.x = player.x - 1;
+      }
+    }
+  }
+  
+  
+  for (var e = 0; e < gold.length; e++) {
+    if (collision(player,gold[e]) && gold[e].show == 1) {
+      goldPoints = goldPoints + 1;
+         gold[e].show = 0;
+    }
+  }
+
+
+};
+
+var collision = function(obj1, obj2) {
+
+  if ( obj1.x + obj1.w > obj2.x &&
+      obj1.x < obj2.x + obj2.w &&
+      obj2.y + obj2.h > obj1.y &&
+      obj2.y < obj1.y + obj1.h ) {
+          return true;
+  } else {
+      return false;
+  }
+
+};
+
+// Keys
+
+var keyPressed = function() {
+  if (keyCode == LEFT) {
+    left = 1;
+  }
+  if (keyCode == RIGHT) {
+    right = 1;
+  }
+  if (keyCode == UP) {
+    up = 1;
+  }
+  if (keyCode == DOWN) {
+    down = 1;
+  }
+};
+
+
+
+var keyReleased = function() {
+  if (keyCode == LEFT) {
+    left = 0;
+  }  
+  if (keyCode == RIGHT) {
+    right = 0;
+  }
+  if (keyCode == UP) {
+    up = 0;
+  }
+  if (keyCode == DOWN) {
+    down = 0;
+  }
+};
+
+      }
+    }
+
+    var canvas = document.getElementById("mycanvas"); 
+    var processingInstance = new Processing(canvas, sketchProc); 
+
+</script>
+    </body>
+</html>

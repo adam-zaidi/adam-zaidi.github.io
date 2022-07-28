@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Rocket Lander</title>
+        <link rel="stylesheet" href="projects.css">
+        <script src="https://cdn.jsdelivr.net/processing.js/1.4.8/processing.min.js"></script>
+        <link rel="shortcut icon" href="repl_logo.png"/>
+    </head>
+    <body>
+        
+        <div class="project-title">
+          <img src="img/backarrow.png" height="40" width="70" onclick="history.back();"/>
+          ROCKET LANDER
+        </div>
+        </br>
+        
+        <canvas id="mycanvas" > </canvas>
+        
+        <script>
+
+    var sketchProc = function(processingInstance) {
+        with (processingInstance) {
+
+
+var playerImg = loadImage("img/rocket.png");
+var flame = loadImage("flame.png");
+var flame2 = loadImage("flame2.png");
+var flame3 = loadImage("flame3.png");
+var explosion = loadImage("explosion.png");
+
+var player;
+var gravity = 0.005;
+
+var rocket = 0;
+var rocketMax = 0.01;
+var rocketPower = 0.001;
+
+var thruster = 0;
+var thrusterMax = 0.01;
+var thrusterPower = 0.001;
+
+var thrusterLeft = false;
+var thrusterRight = false;
+
+var rocketOn = false;
+
+var platform;
+
+var fuel = 30;
+
+var startScreen = true;
+
+var tutorialScreen = false;
+var rocketlandertutimg = loadImage("rocketlandertutorial.png");
+
+
+var setup = function() {
+  size(500, 500);
+  rectMode(CENTER);
+  player = { x: 250, y: 50, w: 50, h: 100, xv: 0, yv: 0, img: playerImg};
+  platform = {x: random(50,450), y: 490, w: 100, h: 20};
+};
+
+
+
+var draw = function() {
+  if (startScreen && !tutorialScreen) {
+    drawStartScreen();
+  }
+  if (!startScreen && tutorialScreen) {
+    drawTutorialScreen();
+  }
+  if (!startScreen && !tutorialScreen) {
+    background(0);
+    checkLanding();
+    checkFuel();
+    drawPlayer();
+    movePlayer();
+    drawGround();
+    rocketScience();
+    thrusterScience();
+    displayInfo();
+  }
+};
+
+
+
+var drawGround = function () {
+  fill(255,165,0);
+  rect(250,490,500,20);
+  fill(255,0,0);
+  rect(platform.x, platform.y, platform.w, platform.h);
+};
+
+var drawPlayer = function() {
+  image(player.img, player.x, player.y, player.w, player.h);
+  if (rocketOn) {
+    fill(255,0,0);
+    image(flame, player.x, player.y + player.h, player.w, 70)
+  }
+  
+  if (thrusterLeft) {
+    fill(255,0,0);
+    image(flame3, player.x - player.w + 5, player.y + player.h - 40, 40, 20);
+  }
+  if (thrusterRight) {
+    fill(255,0,0);
+    image(flame2, player.x + player.w + 5, player.y + player.h - 40, 40, 20);
+  }
+};
+
+var movePlayer = function () {
+  if (player.y < 480 - (player.h)) {
+    player.y += player.yv;
+    player.yv += gravity - rocket;
+    player.x += player.xv;
+    player.xv += thruster;
+  } else {
+    player.y = 480 - (player.h);
+  }
+};
+
+var rocketScience = function () {
+  if (rocketOn) {
+    if(rocket < rocketMax) {
+      rocket += rocketPower;
+    } else {
+      rocket = rocketMax;
+    }
+  } else {
+    rocket = 0;
+  }
+};
+
+var thrusterScience = function () {
+  if (thrusterLeft) {
+    if(thruster < thrusterMax) {
+      thruster += thrusterPower;
+    } else {
+      thruster = thrusterMax;
+    }
+  }
+  if (thrusterRight) {
+    if(thruster > -thrusterMax) {
+      thruster -= thrusterPower;
+    } else {
+      thruster = -thrusterMax;
+    }
+  }
+  if (thrusterLeft === thrusterRight) {
+    thruster = 0;
+  }
+};
+
+var displayInfo = function () {
+  fill(0,255,0);
+  rect(75,75,150,150);
+  fill(0);
+  textSize(14);
+  textAlign(LEFT);
+  text("Y velocity: " + player.yv.toFixed(2), 5, 25);
+  text("X velocity: " + player.xv.toFixed(2), 5, 45);
+  text("Fuel: " + fuel.toFixed(2), 5, 65);
+};
+
+var checkFuel = function () {
+  if (rocketOn || thrusterLeft || thrusterRight) {
+    fuel -= 0.1;
+  }
+  if (fuel <= 0) {
+    fuel = 0;
+    rocketOn = false;
+    thrusterLeft = false;
+    thrusterRight = false;
+  }
+}
+
+var checkLanding = function () {
+  if (player.y == 480 - (player.h)) {
+    rocketOn = false;
+    thrusterLeft = false;
+    thrusterRight = false;
+    fill(255);
+    textSize(36);
+    textAlign(CENTER);
+    if(abs(player.x - platform.x) <= platform.x/2 - player.h/2) {
+      text("PLATFORM HIT", 250, 250);
+      if(player.yv < 1) {
+        text("SAFE SPEED", 250,350);
+      } else {
+        text("UNSAFE SPEED", 250,350);
+        textSize(25);
+        text("STAY BELOW Y VELOCITY OF 1", 250, 400);
+        player.img = explosion;
+        player.y = 400;
+        player.w = 50;
+        player.h = 80;
+      }
+    } else {
+      text("PLATFORM MISS", 250, 250);
+      player.img = explosion;
+      player.y = 400;
+      player.w = 50;
+      player.h = 80;
+    }
+  textSize(20)
+  text("PRESS 'R' TO PLAY AGAIN", 250, 180)
+  }
+};
+
+var drawStartScreen = function () {
+  textAlign(CENTER,CENTER);
+  background(0);
+
+  noStroke();
+  textSize(50)
+
+  fill(255);
+  text("Rocket Lander", 248,73);
+  text("Rocket Lander", 250,75);
+
+  fill(20);
+  rect(250,200,300,100);
+
+  fill(255);
+  text("Start",248,198);
+  text("Start",250,200);
+
+  fill(20);
+  rect(250,350,300,100);
+
+  fill(255);
+  text("How to Play",248,348);
+  text("How to Play",250,350);
+}
+
+var drawTutorialScreen = function () {
+  image(rocketlandertutimg,0,0);
+}
+
+var keyPressed = function () {
+  if(keyCode == DOWN) {
+    rocketOn = true;
+  }
+  if (keyCode == LEFT) {
+    thrusterLeft = true;
+  }
+  if (keyCode == RIGHT) {
+    thrusterRight = true;
+  }
+  if(keyCode == 82 && player.y == 480 - player.h) {
+    player.y = 50;
+    player.x = 250;
+    player.xv = 0;
+    player.yv = 0;
+    platform.x = random(50,450);
+    player.w = 50;
+    player.h = 100;
+    player.img = playerImg;
+    fuel = 30;
+  }
+  if (keyCode == 78 && tutorialScreen && !startScreen) {
+    startScreen = true;
+    tutorialScreen = false;
+  }
+};
+
+var keyReleased = function () {
+  if(keyCode == DOWN) {
+    rocketOn = false;
+  }
+  if (keyCode == LEFT) {
+    thrusterLeft = false;
+  }
+  if (keyCode == RIGHT) {
+    thrusterRight = false;
+  }
+}
+
+var mouseClicked = function () {
+  if (mouseX > 99 &&
+      mouseX < 401 &&
+      mouseY > 149 &&
+      mouseY < 251) {
+    startScreen = false;
+    console.log("mouseX: " + mouseX);
+    console.log("mouseY: " + mouseY);
+  }
+  if (mouseX > 99 &&
+      mouseX < 401 &&
+      mouseY > 299 &&
+      mouseY < 399 &&
+      startScreen) {
+    tutorialScreen = true;
+    startScreen = false;
+  }
+}
+
+      }
+    }
+
+    var canvas = document.getElementById("mycanvas"); 
+    var processingInstance = new Processing(canvas, sketchProc); 
+
+</script>
+    </body>
+</html>

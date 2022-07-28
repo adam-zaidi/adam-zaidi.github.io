@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Paint</title>
+        <link rel="stylesheet" href="projects.css"> 
+        <script src="https://cdn.jsdelivr.net/processing.js/1.4.8/processing.min.js"></script>
+        <link rel="shortcut icon" href="repl_logo.png"/>
+    </head>
+    <body>
+        
+        <div class="project-title">
+          <img src="img/backarrow.png" height="40" width="70" onclick="history.back();"/>
+          PAINT
+        </div>
+        
+        </br>
+
+        <h3>Instructions</h3>
+        <ul>
+          <li>The numbers correspond to different colors</li>
+          <ul>
+            <li>1: Black</li>
+            <li>2: White</li>
+            <li>3: Red</li>
+            <li>4: Orange</li>
+            <li>5: Yellow</li>
+            <li>6: Green</li>
+            <li>7: Blue</li>
+            <li>8: Purple</li>
+          </ul>
+          <li>Use the up and down arrows to change pen size</li>
+        </ul>
+
+        <canvas id="mycanvas" > </canvas>
+        
+        <script>
+
+    var sketchProc = function(processingInstance) {
+        with (processingInstance) {
+
+size(500,500);
+
+var mouseDown = false;
+
+var penThickness = 21;
+
+var lastX = 0;
+var lastY = 0;
+
+var draw = function () {
+  strokeWeight(penThickness);
+  if (mouseDown) {
+    line(lastX, lastY, mouseX, mouseY);
+  }
+  lastX = mouseX;
+  lastY = mouseY;
+}
+
+  
+
+var mousePressed = function () {
+  mouseDown = true;
+};
+
+var mouseReleased = function () {
+  mouseDown = false;
+};
+
+var keyPressed = function () {
+
+  if(keyCode == 38) {
+    penThickness += 5;
+  }
+  if(keyCode == 40) {
+    penThickness -= 5;
+  }
+
+  //1
+  if (keyCode == 49) {
+    stroke(0,0,0);
+  }
+  //2
+  if (keyCode == 50) {
+    stroke(255,255,255);
+  }
+  //3
+  if (keyCode == 51) {
+    stroke(255,0,0);
+  }
+  //4
+  if (keyCode == 52) {
+    stroke(255,131,0);
+  }
+  //5
+  if (keyCode == 53) {
+    stroke(255,255,0);
+  }
+  //6
+  if (keyCode == 54) {
+    stroke(0,255,0);
+  }
+  //7
+  if (keyCode == 55) {
+    stroke(0,0,255);
+  }
+  //8
+  if (keyCode == 56) {
+    stroke(178,0,255);
+  }
+}
+
+
+
+        }
+    }
+
+    var canvas = document.getElementById("mycanvas"); 
+    var processingInstance = new Processing(canvas, sketchProc); 
+
+</script>
+    </body>
+</html>

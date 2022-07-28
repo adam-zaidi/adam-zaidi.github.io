@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Websites</title>
+        <link rel="stylesheet" href="index.css"> 
+        <link rel="stylesheet" href="navbar.css"> 
+        <link rel="shortcut icon" href="repl_logo.png"/>
+    </head>
+    <body>
+        
+        <h1>Websites</h1>
+        
+        <script type="text/javascript">
+tday=new Array("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday");
+tmonth=new Array("January","February","March","April","May","June","July","August","September","October","November","December");
+
+function GetClock(){
+var d=new Date();
+var nday=d.getDay(),nmonth=d.getMonth(),ndate=d.getDate(),nyear=d.getYear();
+if(nyear<1000) nyear+=1900;
+var nhour=d.getHours(),nmin=d.getMinutes(),nsec=d.getSeconds(),ap;
+
+if(nhour==0){ap=" AM";nhour=12;}
+else if(nhour<12){ap=" AM";}
+else if(nhour==12){ap=" PM";}
+else if(nhour>12){ap=" PM";nhour-=12;}
+
+if(nmin<=9) nmin="0"+nmin;
+if(nsec<=9) nsec="0"+nsec;
+
+document.getElementById('clockbox').innerHTML=""+tday[nday]+", "+tmonth[nmonth]+" "+ndate+", "+nyear+" "+nhour+":"+nmin+":"+nsec+ap+"";
+}
+
+window.onload=function(){
+GetClock();
+setInterval(GetClock,1000);
+}
+</script>
+<div id="clockbox" class="time" align=left>Sunday, January 10, 2016 7:59:02 PM</div>
+        
+        <div class="navbar">
+        <ul class="mainmenu">
+            <li class="mainmenu"><a href="index.html">Home</a></li>
+            <li class="mainmenu"><a href="gamings.html">Games</a></li>
+            <li class="mainmenu"><a href="mathprojects.html">Math Projects</a></li>
+            <li class="mainmenu"><a href="otherprojects.html">Other Projects</a></li>
+            <li class="mainmenu"><a href="websites.html" class="selected">Websites</a></li>
+            <li class="mainmenu"><a href="form.html">Rate my Website!</a></li>
+            
+        </ul>    
+        </div>
+    
+    </br>
+        </br>
+        </br>
+        </br>
+        
+        <div class="test">
+        <div>
+        Math Resources
+        </div>
+        <div>
+        Calculator
+        </div>
+        </div>
+
+        <a href="https://math-resources--sfdcoderaz.repl.co"><img src="linksimg/mathresources.png" /></a>
+        <a href="https://calculator--sfdcoderaz.repl.co"><img src="linksimg/calculator.png" /></a>
+    
+    </body>
+</html>

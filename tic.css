@@ -1,0 +1,60 @@
+.square {        
+    background-color: #cecece;    
+    grid-column: auto;
+    grid-row: auto;
+    color: #3a3a3a;
+    font-family: sans-serif;
+    font-size: 5em;
+    display: flex;   
+    justify-content: center;
+    align-items: center;
+}
+
+#board {
+        
+    margin: 20px auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    width: 400px;
+    height: 400px;
+    row-gap: 10px;
+    column-gap: 10px;
+    background-color: #9b9b9b;    
+}
+
+h1 {
+    text-align: center;
+}
+
+h2 {
+    text-align: center;
+}
+
+#controls {
+    margin: 20px auto 20px auto;
+    display: grid;
+    width: 400px;   
+}
+
+#names {
+    margin: 0 auto;
+    display: grid;
+    width: 400px;
+    text-align: center;
+    
+}
+
+label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 5px;
+    
+}
+
+input[name="O player"] {
+    margin-bottom: 20px;
+
+}
