@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Helicopter Game</title>
+        <link rel="stylesheet" href="projects.css">
+        <script src="https://cdn.jsdelivr.net/processing.js/1.4.8/processing.min.js"></script>
+        <link rel="shortcut icon" href="repl_logo.png"/>
+    </head>
+    <body>
+        
+        <div class="project-title">
+          <img src="img/backarrow.png" height="40" width="70" onclick="history.back();"/>
+          HELICOPTER GAME
+        </div>
+        
+
+        <h3>Instructions</h3> 
+        <ul style="list-style-type:square;">
+        <li>Click and hold to move up</li>
+        <li>Release to move down</li>
+        </ul>
+        
+        
+        </br>
+        
+        <canvas id="mycanvas" > </canvas>
+        
+        <script>
+
+    var sketchProc = function(processingInstance) {
+        with (processingInstance) {
+
+            var player = [{x: 150, y: 250, size: 50},
+              {x: 130, y: 260, size: 70},
+              {x: 105, y: 210, w: 90, h: 7}];
+
+var coins = [];
+var walls = [];
+var smoke = [];
+
+var gravity = 0;
+var goUp = false;
+var crashed = false;
+
+var score = 0;
+
+var gap = {height: 300, y: 250};
+
+var startScreen = true;
+
+var rotorSpinVariable = 0
+var wallTimer = 0;
+
+var tutorialScreen = false;
+
+var setup = function() {
+    size(500,500)
+  setInterval(createSmoke, 100);
+   setInterval(changeRotorSpinVariable, 100)
+  
+};
+
+var changeRotorSpinVariable = function() {
+    rotorSpinVariable += 1;
+}
+
+var doCoin = function() {
+  
+  var filteredCoins = coins.filter((coin) => {return coin.x > 0 && !coin.collected});
+  coins = filteredCoins;
+  
+  if (random(0,100) < 2) {
+    var newCoin = {x: 600, y: random(0,500), size: 20, collected: false};
+    coins.push(newCoin)
+  }
+  
+//   drawCoins();
+};
+
+var drawCoins = function() {
+    if (crashed) {
+        return;
+    }
+    for (var coin of coins) {
+  
+      fill(255,255,0);
+      ellipse(coin.x, coin.y, coin.size, coin.size);
+    
+      coin.x -= 3;
+    
+      var playerRadius = player[0].size / 2;
+      var coinRadius = coin.size / 2;
+      var touchDistance = playerRadius + coinRadius;
+    
+      if (dist(player[0].x, player[0].y, coin.x, coin.y) < touchDistance) {
+        coin.collected = true;
+        score += 100;
+        coinEffect();
+      }
+    }
+}
+
+var coinEffect = function() {
+    for (var i = 0; i < 100; i++) {
+      stroke(255,255,0);
+      strokeWeight(10);
+      ellipse(160, player[0].y - 10, i, i,255)
+    }
+}
+
+var draw = function() {
+  background(0,81,24);
+  
+  if (startScreen) {
+    drawStartScreen();
+  }
+
+  if (!crashed && !startScreen) {
+  movePlayer();
+  doCoin();
+  moveWalls();
+  doSmoke();
+  addScore();
+    drawCoins();
+    drawPlayer();
+    drawWalls();
+    drawScore();
+  
+  } else if (crashed) {
+    youLoseScreen();
+  }
+
+   if (rotorSpinVariable % 2 === 1) {
+     undoRotors();
+   }
+   if (rotorSpinVariable % 2 === 0) {
+     doRotors();
+   }
+
+};
+
+var drawStartScreen = function () {
+  background(0,81,24);
+
+  noStroke();
+  textSize(50)
+
+  fill(255,255,0);
+  text("Helicopter Game", 58,98);
+  fill(0,255,0);
+  text("Helicopter Game", 60,100);
+
+  fill(255);
+  rect(100,200,300,100);
+
+  fill(220,220,220);
+  rect(104,204,292,92);
+
+  fill(100);
+  text("Start",200,265);
+}
+
+var addScore = function() {
+    if(crashed) {
+        return;
+    }
+    score += 1;
+}
+
+var createSmoke = function() {
+  var newSmoke = {x: player[1].x, y: player[1].y, size:10};
+  smoke.push(newSmoke);
+};
+
+var doSmoke = function() {
+  
+  smoke = smoke.filter((s) => {return s.x > -50});
+  
+  for (var s of smoke) {
+    fill(200,200,200,175);
+    ellipse(s.x, s.y, s.size, s.size)
+    
+    s.x -= 4;
+    s.size++
+  }
+}
+
+var drawWalls = function() {
+  for (var wall of walls) {
+    fill(0,255,0)
+    noStroke();
+    rect(wall.x, wall.y, wall.w, wall.h);
+  }
+}
+
+var drawPlayer = function() {
+  noStroke();
+  fill(144,183,240);
+  ellipse(player[0].x, player[0].y, 70, player[0].size);
+  ellipse(player[1].x, player[1].y, player[1].size, 20);
+  rect(player[2].x, player[2].y, player[2].w, player[2].h);
+  
+};
+
+var drawScore = function() {
+  fill(255,255,0);
+  textSize(24);
+  text(score, 50, 450);
+};
+
+
+
+var doRotors = function() {
+  if (crashed) {
+        return;
+    }
+  player[2].w = 10;
+  player[2].x = 140;
+}
+
+var undoRotors = function() {
+  if (crashed) {
+        return;
+    }
+  player[2].w = 90;
+  player[2].x = 105;
+}
+
+var movePlayer = function() {
+  if (goUp) {
+    gravity -=0.4;
+  } else {
+    gravity += 0.3;
+  }
+  
+  if (gravity > 8) {
+    gravity = 8;
+  }
+  if (gravity < -6) {
+    gravity = -6
+  }
+  
+  player[0].y += gravity;
+  player[1].y += gravity;
+  player[2].y += gravity;
+  
+  if (player[0].y > 500 || player[0].y < 0) {
+    crashed = true;
+  }
+};
+
+var moveWalls = function() {
+  for (var wall of walls) {
+    wall.x -= 3
+    
+    if (wall.x < player[0].x && wall.x + wall.w > player[0].x) {
+      if (player[0].y - player[0].size/2 < wall.y + wall.h && player[0].y + player[0].size/2 > wall.y) {
+        crashed = true;
+      }
+    }
+  }
+  
+  if (wallTimer <= 0) {
+    wallTimer = 16;
+    gap.y += 25 * floor(random(3) -1)
+    
+    if (gap.y < 150) {
+      gap.y = 150;
+    }
+    if (gap.y > 350) {
+      gap.y = 350;
+    }
+    
+  var newWall = {x: 500, y: 0, w: 50, h: gap.y - gap.height / 2}
+  walls.push(newWall)
+  newWall = {x: 500, y: gap.height + (gap.y - gap.height / 2), w: 50, h: 500 - (gap.height + (gap.y - gap.height / 2))}
+  walls.push(newWall)
+  }
+  wallTimer -= 1;
+}
+
+var youLoseScreen = function() {
+  fill(255);
+  
+  textSize(24);
+  
+  text("Game Over", 200, 200);
+  
+  text("Score: " + score, 200, 275)
+  
+  text("Click to Restart", 180, 350);
+};
+
+var mousePressed = function() {
+  if (startScreen) {
+    if (setMouseClick(mouseX,mouseY,100,200,300,100)) {
+      startScreen = false;
+    }
+  } else if (!startScreen) {
+    goUp = true;
+      
+    if (crashed) {
+      crashed = false;
+      player[0].y = 250;
+      player[1].y = 260;
+      player[2].y = 210;
+      gravity = 0;
+          
+      score = 0;
+      coins = [];
+      walls = [];
+      smoke = [];
+    }
+  }
+}
+
+var mouseReleased = function() {
+    goUp = false;
+}
+
+function setMouseClick (mouseX,mouseY,x,y,w,h) {
+  if (mouseX > x-1 && mouseX < x+w+1 && mouseY > y-1 && mouseY < y+h+1) {
+    return true;
+  } else {
+    return false;
+  }
+}  
+
+
+        }
+    }
+
+    var canvas = document.getElementById("mycanvas"); 
+    var processingInstance = new Processing(canvas, sketchProc); 
+
+</script>
+    </body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Geo Scroller</title>
+        <link rel="stylesheet" href="projects.css">
+        <script src="https://cdn.jsdelivr.net/processing.js/1.4.8/processing.min.js"></script>
+        <link rel="shortcut icon" href="repl_logo.png"/>
+    </head>
+    <body>
+        
+        <div class="project-title">
+          <img src="img/backarrow.png" height="40" width="70" onclick="history.back();"/>
+          GEOSCROLLER
+        </div>
+        
+
+        <h3>Instructions</h3> 
+        <ul style="list-style-type:square;">
+        <li>Use arrow keys to move</li>
+        <li>Avoid green triangles</li>
+        </ul>
+        </br>
+        
+        <canvas id="mycanvas" > </canvas>
+        
+        <script>
+
+    var sketchProc = function(processingInstance) {
+        with (processingInstance) {
+
+size(500,500);
+
+var backgroundImg = loadImage("islands.png");
+var backgroundY = 0;
+
+var player = {x: 250, y: 450, size: 40};
+
+var enemies = [];
+
+var spd = 5;
+var left = false;
+var right = false;
+var up = false;
+var down = false;
+
+var rate = 3;
+
+var crashed = false;
+
+var score = 0;
+
+var startScreen = true;
+
+var draw = function () {
+  if (startScreen) {
+    drawStartScreen();
+  }
+  if (!crashed && !startScreen) {
+    scrollBackground();
+    noStroke();
+    drawPlayer();
+    movePlayer();
+    drawEnemies();
+    doEnemies();
+    drawScore();
+  }
+  ifcrashed();
+};
+
+
+
+
+var movePlayer = function () {
+  if (left && player.x > 20) {
+    player.x -= spd;
+  }
+  if (right && player.x < 480) {
+    player.x += spd;
+  }
+  if (up && player.y > 30) {
+    player.y -= spd;
+  }
+  if (down && player.y < 500) {
+    player.y += spd;
+  }
+};
+
+var drawPlayer = function () {
+  fill(255,0,0);
+  triangle(player.x - player.size/2, player.y, player.x + player.size/2, player.y, player.x, player.y - player.size*3/4);
+};
+
+var drawScore = function () {
+  textSize(20);
+  fill(255);
+  textAlign(TOP,LEFT);
+  text("SCORE: " + score, 20, 480);
+  
+  score += 1;
+};
+
+var ifcrashed = function () {
+  if (crashed) {
+    textAlign(TOP,LEFT);
+    textSize(40);
+    text("YOU LOSE", 150, 200);
+    textSize(25);
+    text("PRESS 'R' TO PLAY AGAIN", 100, 300)
+  }
+};
+
+var doEnemies = function () {
+  if (random(0,50) < rate) {
+    var newEnemy = {x: random(0,500), y: -50, yspd: random(1,5), size: random(10,100)};
+    enemies.push(newEnemy);
+  }
+  
+  for (var enemy of enemies) {
+    enemy.y += enemy.yspd;
+    if (collision(enemy,player)) {
+      crashed = true;
+      console.log("crashed");
+    }
+
+  
+  }
+
+  if (score > 900) {
+    rate = round(score/300);
+  }
+
+  
+  enemies = enemies.filter((en) => {
+          return en.y > -(en.size*3/4) && en.x > -en.size && en.x < 500 && en.y < 500;
+  }); 
+};
+
+var drawEnemies = function () {
+  for (var enemy of enemies) {
+    fill(0,255,0);
+    triangle(enemy.x - enemy.size/2, enemy.y, enemy.x + enemy.size/2, enemy.y, enemy.x, enemy.y + enemy.size*3/4);
+  }
+};
+
+var scrollBackground = function () {
+  image(backgroundImg, 0, backgroundY - 3500);
+  image(backgroundImg, 0, backgroundY - 1500);
+  
+  backgroundY += 1;
+  
+  if (backgroundY > 2000) {
+    backgroundY = 0;
+  }
+};
+
+var drawStartScreen = function () {
+  textAlign(CENTER,CENTER);
+  background(0,70,131);
+
+  noStroke();
+  textSize(50)
+
+  fill(45,0,132);
+  text("GeoScroller", 248,98);
+  text("GeoScroller", 250,100);
+
+  fill(0,255,0);
+  rect(100,200,300,100);
+
+  fill(0,131,67);
+  rect(104,204,292,92);
+
+  fill(45,0,132);
+  text("Start",248,248);
+  text("Start",250,250);
+}
+
+var keyPressed = function () {
+  if (keyCode == RIGHT) {
+    right = true;
+  }
+  if (keyCode == LEFT) {
+    left = true;
+  }
+  if (keyCode == UP) {
+    up = true;
+  }
+  if (keyCode == DOWN) {
+    down = true;
+  }
+  
+  if (keyCode === 82) {
+    score = 0;
+    crashed = false;
+    player.x = 250;
+    player.y = 450;
+    enemies = [];
+  }
+}
+
+var keyReleased = function () {
+  if (keyCode == RIGHT) {
+    right = false;
+  }
+  if (keyCode == LEFT) {
+    left = false;
+  }
+  if (keyCode == UP) {
+    up = false;
+  }
+  if (keyCode == DOWN) {
+    down = false
+  }
+};
+
+var collision = function (enemy,player) {
+  var minDist = 3;
+  
+  var plx = player.x - player.size/2;
+  var prx = player.x + player.size/2;
+  var py = player.y;
+  
+  var erx = enemy.x + enemy.size/2;
+  var elx = enemy.x +- enemy.size/2;
+  var ey = enemy.y;
+  
+  for (var i = 0; i <= player.size/2; i++) {
+    for(var j = 0; j <= enemy.size/2; j++) {
+      if(dist(plx + i, py - i*1.5, erx - j, ey + j * 1.5) < minDist) {
+        return true;
+      }
+      if(dist(prx - i, py - i*1.5, elx + j, ey + j * 1.5) < minDist) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
+var mouseClicked = function () {
+  startScreen = false;
+}
+
+
+
+
+      }
+    }
+
+    var canvas = document.getElementById("mycanvas"); 
+    var processingInstance = new Processing(canvas, sketchProc); 
+
+</script>
+    </body>
+</html>

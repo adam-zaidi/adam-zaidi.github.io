@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>Test Web Games</title>
+	<link rel="stylesheet" href="index.css">
+	<script src="https://cdn.jsdelivr.net/processing.js/1.4.8/processing.min.js">
+  <link rel="shortcut icon" href="repl_logo.png"/>
+
+	</script>
+</head>
+
+<body>
+
+	<h1>Test Web Games</h1>
+	</br>
+
+	<a href="gamings.html">Go Back to Games</a>
+
+	</br>
+	</br>
+
+	<canvas id="mycanvas"> </canvas>
+
+	<script>
+		var sketchProc = function(processingInstance) {
+        with (processingInstance) {
+
+var setup = function() {
+    size(500,500)
+    setInterval(changeDinoRunVariable, 100);
+  
+};
+
+//import files
+var berd = loadImage("berd.png");
+var berd2 = loadImage("berd2.png");
+var cactusBig0000 = loadImage("cactusBig0000.png")
+var cactusSmall0000 = loadImage("cactusSmall0000.png")
+var cactusSmallMany0000 = loadImage("cactusSmallMany0000.png");
+var dino0000 = loadImage("dino0000.png");
+var dinoDead0000 = loadImage("dinoDead0000.png");
+var dinoDuck0000 = loadImage("dinoduck0000.png");
+var dinoDuck0001 = loadImage("dinoduck0001.png");
+var dinorun0000 = loadImage("dinorun0000.png");
+var dinorun0001 = loadImage("dinorun0001.png");
+var dinoJump0000 = loadImage("dinoJump0000.png")
+
+var dino = {
+          xpos: 40,
+          ypos: 250,
+          width: 42,
+          height: 50,
+          img: dino0000
+}
+
+var ground = {
+          xpos: 0,
+          ypos: 300,
+          width: 500,
+          height: 3
+}
+
+var cactusSmall = {
+          xpos: 700,
+          ypos: 270,
+          width: 20,
+          height: 30,
+          img: cactusSmall0000,
+          spd: 5
+}
+
+var cactusBig = {
+          xpos: 850,
+          ypos: 260,
+          width: 25,
+          height: 40,
+          img: cactusBig0000,
+          spd: 5 
+}
+
+var cactusGroup = {
+          xpos: 500,
+          ypos: 270,
+          width: 75,
+          height: 30,
+          img: cactusSmallMany0000,
+          spd: 5
+}
+
+var dinoRunVariable = 0;
+
+var gravity = 3;
+var fallAcceleration = 0.25;
+var goUp = false;
+var crashed = false;
+
+var jumping = false;
+
+var ducking = false;
+
+//Draw Function
+var draw = function () {
+  background(255);
+
+  fill(0);
+  rect(ground.xpos,ground.ypos,ground.width,ground.height)
+
+  if(!crashed)  { 
+    drawDino();
+    drawCacti();
+
+    moveDino();
+    moveCacti();
+  }
+}
+
+var drawCacti = function () {
+  image(cactusSmall.img, cactusSmall.xpos, cactusSmall.ypos, cactusSmall.width, cactusSmall.height);
+
+  image(cactusBig.img, cactusBig.xpos, cactusBig.ypos, cactusBig.width, cactusBig.height);
+
+  image(cactusGroup.img, cactusGroup.xpos, cactusGroup.ypos, cactusGroup.width, cactusGroup.height);
+}
+
+var moveCacti = function () {
+  cactusSmall.xpos -= cactusSmall.spd;
+  cactusBig.xpos -= cactusBig.spd;
+  cactusGroup.xpos -= cactusGroup.spd;
+
+  if (cactusSmall.xpos < -30) {
+    cactusSmall.xpos = floor(random(550,700));
+  }
+
+  if (cactusBig.xpos < -35) {
+    cactusBig.xpos = floor(random(550,700));
+  }
+
+  if (cactusGroup.xpos < -85) {
+    cactusGroup.xpos = floor(random(550,700));
+  }
+}
+
+var drawDino = function () {
+  image(dino.img, dino.xpos, dino.ypos, dino.width, dino.height);
+
+  if(!ducking) {
+    dino.width = 42;
+    dino.height = 50;
+    if(gravity === 0) {
+      if(dinoRunVariable % 2 === 0) {
+        dino.img = dinorun0000;
+      } else if (dinoRunVariable % 2 === 1) {
+        dino.img = dinorun0001;
+      }
+    } else if(gravity != 0) {
+      dino.img = dinoJump0000;
+    }
+  } else if (ducking) {
+    dino.width = 60;
+    dino.height = 35;
+    dino.ypos = 265;
+    if(dinoRunVariable % 2 === 0) {
+        dino.img = dinoDuck0000;
+      } else if (dinoRunVariable % 2 === 1) {
+        dino.img = dinoDuck0001;
+      }
+  }
+
+  if (collision(dino, cactusSmall)) {
+    console.log("small")
+    crashed = true;
+  }
+
+  if (collision(dino, cactusBig)) {
+    console.log("big")
+    crashed = true;
+  }
+
+  if (collision(dino, cactusGroup)) {
+    console.log("group")
+    crashed = true;
+  }
+
+}
+
+var moveDino = function () {
+
+  dino.ypos += gravity;
+
+  if(dino.ypos < 251) {
+    dino.ypos += gravity;
+    gravity += fallAcceleration;
+    jumping = true;
+  }
+
+  if(collision(dino, ground)) {
+    gravity = 0;
+    jumping = false;
+  }
+};
+
+
+var changeDinoRunVariable = function () {
+  dinoRunVariable += 1;
+}
+
+var collision = function (obj1, obj2) {
+
+  if (obj1.xpos + obj1.width > obj2.xpos &&
+    obj1.xpos < obj2.xpos + obj2.width &&
+    obj2.ypos + obj2.height > obj1.ypos &&
+    obj2.ypos < obj1.ypos + obj1.height) {
+    return true;
+  } else {
+    return false;
+  }
+
+};
+
+var keyPressed = function () {
+  if(!jumping) {
+    if (keyCode === 32 || keyCode === 38) {
+      // goUp = true;
+      gravity = -4.5;
+    }
+  }
+
+  // if(!ducking) {
+    if (keyCode === 40) {
+      console.log("test")
+      ducking = true;
+
+    }
+  // }
+}
+
+var keyReleased = function () {
+  if (keyCode === 32) {
+    goUp = false;
+  }
+
+  if (keyCode === 40) {
+    ducking = false;
+    dino.ypos = 250;
+  }
+}
+
+        }
+      }
+
+    var canvas = document.getElementById("mycanvas"); 
+    var processingInstance = new Processing(canvas, sketchProc);
+	</script>
+</body>
+
+</html>

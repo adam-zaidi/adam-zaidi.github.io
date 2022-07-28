@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Brick Breaker</title>
+        <link rel="stylesheet" href="index.css"> 
+        <script src="https://cdn.jsdelivr.net/processing.js/1.4.8/processing.min.js"></script>
+        <link rel="shortcut icon" href="repl_logo.png"/>
+    </head>
+    <body>
+        
+        <h1>Brick Breaker</h1>
+        </br>
+        
+        <input type="button" onclick="history.back();" value="Go Back To Games">
+        
+        </br>
+        </br>
+        
+        <canvas id="mycanvas" > </canvas>
+        
+        <script>
+
+    var sketchProc = function(processingInstance) {
+        with (processingInstance) {
+
+var gameWidth = 400;
+var gameHeight = 400;
+
+var score = 0;
+var lives = 5;
+
+var win = 0;
+var lose = 0;
+
+
+var ballDiameter = 10;
+
+var ball = {x: gameWidth/2, y: gameWidth* 2/3,
+            w: ballDiameter, h: ballDiameter};
+            
+var dx = -4;
+var dy = 4;
+
+
+var playerWidth = 75;
+var playerHeight = 15;
+var player = {x: gameWidth * 1/4, y: gameHeight - 16, w: 50, h: playerHeight};
+
+var playerSpeed = 5;
+
+var left = 0;
+var right = 0;
+
+var blocks = [];
+var blockNum = 0;
+
+for (var i = 0; i< 8; i++) {
+  for (var j = 0; j < 5; j++) {
+    blocks[blockNum] = {x: i * 50, y: j* 30, w: 40, h: 20, show: 1};
+    blockNum++;
+  }
+}
+
+
+
+
+var draw = function() {
+  size(400, 400);
+  
+  background(102, 204, 255);
+  
+  drawBlocks();
+  
+  drawBall();
+  
+  drawPlayer();
+  
+  drawText();
+
+  if(lives <= 0) {
+    return;
+  }
+  
+  if(score == 40) {
+    return;
+  }
+
+};
+
+var drawBlocks = function() {
+  fill(153,0,204);
+  for(var a = 0; a < blocks.length; a++) {
+    if (collision(ball, blocks[a]) && blocks[a].show == 1) {
+      blocks[a].show = 0;
+      dy = -dy;
+      score++;
+    }
+    
+    if(blocks[a].show == 1) {
+      
+      rect(blocks[a].x, blocks[a].y, blocks[a].w, blocks[a].h);
+    }
+  }
+};
+
+var drawBall = function() {
+  
+  if(ball.x + ballDiameter < 0 || ball.x + ballDiameter > gameWidth) {
+    dx = -dx;
+  }
+  if(ball.y + ballDiameter < 0 || ball.y + ballDiameter > gameHeight) {
+    dy = -dy;
+  }
+  
+  fill(0,0,204);
+  
+  if (win != 1 && lose != 1) {
+    ball.x += dx;
+    ball.y += dy;
+  }
+  
+  
+  if (ball.y > gameHeight - 10) {
+    lives--;
+    dx = -4;
+    dy = 4;
+    ball.x = gameWidth / 2;
+    ball.y - gameHeight * 2/3;
+  }
+  
+  ellipse(ball.x, ball.y, ball.w, ball.h);
+};
+
+var drawPlayer = function() {
+  
+  if (left == 1) {
+    if (player.x > 0) {
+      player.x -= playerSpeed;
+    }
+  }
+  
+  if (right == 1) {
+    if (player.x  + playerWidth < 425) {
+      player.x += playerSpeed;
+    }
+  }
+  
+  
+  fill(102,0,102);
+  // fill(255,0,0)
+  noStroke();
+  rect(player.x, player.y, player.w, player.h);
+  
+  if(collision(ball, player)) {
+    dy = -dy;
+    if(ball.x - player.x < 6) {
+        dx -=2.5;
+    }
+    if(ball.x - player.x < 11 && ball.x - player.x > 5) {
+        dx -=1.5;
+    }
+    if(ball.x - player.x < 16 && ball.x - player.x > 10) {
+        dx -=0.5;
+    }
+    
+    if(ball.x - player.x > 45) {
+        dx +=2.5;
+    }
+    if(ball.x - player.x > 39 && (ball.x - player.x < 46)) {
+        dx +=1.5;
+    }
+    if(ball.x - player.x > 35 && (ball.x - player.x < 41)) {
+        dx +=0.5;
+    }
+  }
+  
+
+};
+
+var drawText = function() {
+  
+  fill(0);
+  textSize(14);
+  text("Score: " + score, 10, gameHeight - 40);
+  text("Lives: " + lives, 10, gameHeight - 20);
+  
+  if (lives<=0) {
+    lose=1;
+    textSize(30);
+    text("You lose!", 20, gameHeight - 80);
+    lives = 1;
+  }
+  
+  if (lives>=40) {
+    win=1;
+    textSize(30);
+    text("You Win!", 20, gameHeight - 80);
+  }
+};
+
+var collision = function(obj1, obj2) {
+  if(obj1.x + obj1.w > obj2.x &&
+    obj1.x < obj2.x + obj2.w &&
+    obj2.y + obj2.h > obj1.y &&
+    obj2.y < obj1.y + obj1.h) {
+      return true;
+    } else {
+      return false;
+    }
+};
+
+var keyPressed = function() {
+  if (keyCode == LEFT) {
+    left=1;
+  }
+  if (keyCode == RIGHT) {
+    right=1;
+  }
+};
+
+var keyReleased = function() {
+  if (keyCode == LEFT) {
+    left=0;
+  }
+  if (keyCode == RIGHT) {
+    right=0;
+  }
+}
+
+        }
+    }
+
+    var canvas = document.getElementById("mycanvas"); 
+    var processingInstance = new Processing(canvas, sketchProc); 
+
+</script>
+    </body>
+</html>

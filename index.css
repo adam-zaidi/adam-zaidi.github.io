@@ -1,0 +1,202 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: black;
+}
+
+.b {
+    background-color: #FF0000;
+}
+
+.red {
+  color: red;
+}
+
+/*h1 {
+    color: #072d15;
+    text-align: center;
+    background-color:#005C09;
+    margin:0;
+    font-family: Arial, Helvetica, sans-serif;
+    width: 100%;
+    height: 10%;
+    text-shadow: 2px 2px black;
+}*/
+
+.main_title {
+  color: #FFFFFF;
+}
+
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 100px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.centered-info {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 80px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.container-title {
+  position: relative;
+  text-align: center;
+  color: white;
+  padding: 0px;
+  margin: 0px;
+	font-family: Arial, Helvetica, sans-serif;
+  line-height: 0px;
+  float: left;
+  width: 100%;
+}
+
+h2 {
+  color: white;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+h3 {
+  color: white;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+p {
+    color: #FFFFFF;
+    margin-top: 0;
+    margin-bottom: 0;
+		font-family: Arial, Helvetica, sans-serif;
+}
+
+.list_link { 
+  color: white;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+.list_link:hover 
+{
+     color:#00A0C6; 
+     text-decoration:none; 
+     cursor:pointer;  
+}
+
+li {
+  color: #FFFFFF;
+  margin-top: 0;
+  margin-bottom: 0;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+.time {
+    color: #072d15;
+    text-align: center;
+    background-color:#005C09;
+    margin:0;
+    font-family: Arial, Helvetica, sans-serif;
+    width: 100%;
+    height: 10%;
+}
+.hit {
+    width: 20%;
+}
+
+.title_img {
+  width: 100%;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  margin: 0px;
+}
+
+
+a:link {
+    text-decoration: none;
+    color: blue;
+}
+
+a:visited {
+    text-decoration: none;
+    color: blue;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: blue;
+}
+
+a:active {
+    text-decoration: underline;
+    color: blue;
+}
+
+.mycanvas {
+    width: 1000;
+    height: 1000;
+    margin: 100;
+}
+
+.welcome_message {
+  background-color: #FFFFFF;
+  text-align: center;
+  height: 320px;
+  width: 100%;
+  padding: 0px;
+  margin: 0px;
+  float: left;
+}
+
+.welcome_message h2 {
+  color: #3a3a3a;
+  padding-top: 80px;
+}
+
+.welcome_message p {
+  color: #3a3a3a;
+  line-height: 1.6;
+}
+
+.info-message {
+  background-color: #FFFFFF;
+  text-align: left;
+  height: 300px;
+  width: 100vw;
+  float: left;
+}
+
+.center-message {
+  width: 50%;
+  margin: 0 auto;
+}
+
+.info-message li {
+  padding-top: 40px;
+  color: #3a3a3a;
+  line-height: 1.6;
+}
+
+.updates-message {
+  background-color: #FFFFFF;
+  text-align: left;
+  height: 380px;
+  width: 100vw;
+  float: left;
+}
+
+.updates-message li {
+  padding-top: 10px;
+  color: #3a3a3a;
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+.updates-message h3 {
+  color: #3a3a3a;
+  line-height: 1.6;
+  padding-top: 20px;
+}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Bouncing Rainbow Squares</title>
+        <link rel="stylesheet" href="projects.css">
+        <script src="https://cdn.jsdelivr.net/processing.js/1.4.8/processing.min.js"></script>
+        <link rel="shortcut icon" href="repl_logo.png"/>
+    </head>
+    <body>
+        
+        <div class="project-title">
+          <img src="img/backarrow.PNG" onclick="history.back();"/>
+          BOUNCING RAINBOW SQUARES
+        </div>
+        
+        </br>
+       
+        <canvas id="mycanvas" > </canvas>
+        
+        <script>
+
+    var sketchProc = function(processingInstance) {
+        with (processingInstance) {
+
+            //~~~~ VARIABLES ~~~~\\
+size(500,500);
+
+var block = {x: 250, y: 250, w: 50, h: 50, xspeed: random(0,5), yspeed: random(0,5), hue: 0};
+
+var draw = function () {
+  noStroke();
+  colorMode(HSB, 100);
+  
+  fill(block.hue, 100,100);
+  block.hue += 1;
+  if (block.hue > 100) {
+    block.hue = 0;
+  }
+  rect(block.x, block.y, block.w, block.h);
+  rect(block.y, block.x, block.w, block.h);
+  
+  block.x += block.xspeed;
+  block.y += block.yspeed;
+  
+  if(block.y > 450 || block.y < 0) {
+    block.yspeed *= -1;
+  }
+  
+  if(block.x > 450 || block.x < 0) {
+    block.xspeed *= -1;
+  }
+  
+  
+};
+
+        }
+    }
+
+    var canvas = document.getElementById("mycanvas"); 
+    var processingInstance = new Processing(canvas, sketchProc); 
+
+</script>
+    </body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Rate my Website!</title>
+        <link rel="stylesheet" href="navbar.css"> 
+        <link rel="stylesheet" href="form.css"> 
+        <link rel="shortcut icon" href="repl_logo.png"/>
+    </head>
+    <body>
+        
+    <div class="bar" style="font-family:georgia,font-size:16px;">
+          <div class="home-icon-item">
+            <a href="http://sfdcoderaz.repl.co/index.html" class="home-icon"></a>
+          </div>
+          <div class="dropdown">
+            <button class="dropbtn"><a href="gamings.html">GAMES</a></button>
+            <div class="dropdown-content">
+              <a href="originalgames.html">ORIGINAL</a>
+              <a href="retrogames.html">RETRO</a>
+              <a href="highscores.html">HIGH SCORES</a>
+            </div>
+          </div>
+          <div class="dropdown">
+            <button class="dropbtn"><a href="projects.html">PROJECTS</a></button>
+            <div class="dropdown-content">
+              <a href="mathprojects.html">MATH</a>
+              <a href="otherprojects.html">OTHER</a>
+            </div>
+          </div> 
+          <a href="form.html" class="bar-item">FORM</a>
+        </div>
+        
+        </br>
+        </br>
+        </br>
+        
+        <h3>What Did you Like The Most?</h3>
+    
+    <select name="mydropdown">
+<option value="">Original Games</option>
+<option value="">Retro Games</option>
+<option value="">Math Projects</option>
+<option value="">Other Projects</option>
+</select>
+    
+    <div class="container">
+      <div class="row">
+      <form onsubmit="results();" method="post" action="mailto:sfdcoderaz@gmail.com">
+        <h3>Enter Name</h3>  
+          <input id="name" type="text" name="name">
+      
+      <h3>Enter Email:</h3>
+      <input id="email" type="text" name="email" />
+      
+          <h3>Rate My Website</h3>
+          <input id="poll1" type="radio" name="website_poll" value="It_was_very_helpful" /> It was interesting <br/>
+          <input id="poll2"type="radio" name="website_poll" value="It_wasn't_very_helpful" /> It was moderately interesting <br/>
+          <input id="poll3"type="radio" name="website_poll" value="I_hated_your_website" /> It was not interesting <br/>
+          
+          <h3>Leave a Comment</h3>
+          
+          <textarea id="comments" name="comments" rows="6" cols="40">
+              Type Here
+          </textarea>
+       
+          <br/>
+          <br/>
+          <input id="submit" type="submit" value="Send Your Form in Now!" />
+      </form>
+      
+      </div>  
+    </div>
+    
+    <script>
+        
+        function results() {
+            
+            var name = document.getElementById('name').value;
+            var email = document.getElementById('email').value;
+            var comments = document.getElementById('comments').value;
+            
+            if (document.getElementById('poll1').checked) {
+              poll = document.getElementById('poll1').value;
+            } else if(document.getElementById('poll2').checked) {
+              poll = document.getElementById('poll2').value;
+            } else if (document.getElementById('poll3').checked) {
+              poll = document.getElementById('poll3').value;
+            } else {
+              poll = document.getElementById('poll4').value;
+            }
+            
+            var document;
+            
+            document.write("Thank You!");
+            document.write("<p>Now you data will be sent via email.</p>");
+            
+            document.write("<h3>Here is you data:</h3>");
+            
+            document.write(name + "<br/>");
+            document.write(email + "<br/>");
+            document.write(poll + "<br/>");
+            document.write(comments + "<br/>")
+            
+            
+            }
+        
+    </script>
+    
+    
+    <br/>
+    <br/>
+    
+    <h2>Contact Me At:</h2>
+    <br/>
+    
+    <a href="mailto:sfdcoderaz@gmail.com">sfdcoderaz@gmail.com</a>
+    
+ 
+    </body>
+</html>

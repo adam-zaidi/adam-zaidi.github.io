@@ -1,0 +1,680 @@
+ <!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Cube Jump</title>
+        <link rel="stylesheet" href="index.css"> 
+        <script src="https://cdn.jsdelivr.net/processing.js/1.4.8/processing.min.js"></script>
+        <link rel="shortcut icon" href="repl_logo.png"/>
+    </head>
+    <body>
+        
+        <h1>Cube Jump</h1>
+        </br>
+        
+        <a href="gamings.html">Go Back to Games</a>
+        
+        </br>
+        </br>
+        
+        <canvas id="mycanvas" > </canvas>
+        
+        <script>
+
+    var sketchProc = function(processingInstance) {
+        with (processingInstance) {
+
+/*----------------Cube Jump------------------
+
+             Made by Adam Zaidi               */
+
+size(500, 500);
+
+var gravity = 3;
+var fallAcceleration = 0.11;
+var jumpHeight = -7.5;
+
+var speed = 20;
+var speed2 = 5;
+
+var left = 0;
+var right = 0;
+
+var setScore = false;
+
+var moveWalls = true;
+
+
+var leftWallw = floor(random(50, 80));
+var leftWallw2 = floor(random(50, 80));
+
+var leftWallx = floor(random(70, 100));
+var leftWallx2 = floor(random(70, 100));
+
+
+var rightWallw = floor(random(50, 80));
+var rightWallw2 = floor(random(50, 80));
+
+
+var middleWallw = floor(random(50, 80));
+var middleWallw2 = floor(random(50, 80));
+
+var middleWallx = leftWallx + leftWallw + floor(random(20,60));
+var middleWallx2 = leftWallx + leftWallw + floor(random(20,60));
+
+//this is an array of objects that represent walls
+var walls = [{ xPosition: 0, yPosition: 0, w: 30, h: 2000 },
+{ xPosition: 470, yPosition: 0, w: 30, h: 2000 },
+{ xPosition: 0, yPosition: 470, w: 500, h: 30 }/*,
+{ xPosition: 0, yPosition: -30, w: 500, h: 30}*/];
+
+
+var movingWallsRightb = [
+  { xPosition: 470 - rightWallw, yPosition: -50, w: rightWallw, h: 20, spd: 2.5, dir: "y" }
+];
+
+var movingWallsRightT = [
+  { xPosition: 500 - rightWallw2, yPosition: -350, w: rightWallw2, h: 20, spd: 2.5, dir: "y" }
+];
+
+
+
+var movingWallsLeftb = [
+  { xPosition: leftWallx, yPosition: 0, w: leftWallw, h: 20, spd: 2.5, dir: "y" }
+];
+
+var movingWallsLeftT = [
+  { xPosition: leftWallx2, yPosition: -300, w: leftWallw2, h: 20, spd: 2.5, dir: "y" }
+];
+
+
+
+var movingWallsMiddleb = [
+  { xPosition: middleWallx, yPosition: -80, w: middleWallw, h: 20, spd: 2.5, dir: "y" }
+];
+
+var movingWallsMiddleT = [
+  { xPosition: middleWallx, yPosition: -380, w: middleWallw2, h: 20, spd: 2.5, dir: "y" }
+];
+
+
+
+
+
+
+var player = { xPosition: 220, yPosition: 250, w: 20, h: 20 };
+
+var numberOfBounces = 0;
+var bouncesTilReset = 0;
+
+var terrenceMad = 0;
+var randomRedBlocks = floor(random(0, 60));
+
+var movewallLtMad = false;
+var movewallLbMad = false;
+
+var movewallMtMad = false;
+var movewallMbMad = false;
+
+var movewallRtMad = false;
+var movewallRbMad = false;
+
+var gameStartRect = 0;
+
+var gameStart = false;
+
+var gameLose = false;
+
+var innerSquareClicked = false;
+
+//this is a function to draw the walls, the moving walls, and my character
+var draw = function () {
+
+  
+
+  drawGameStart();
+
+  if (gameStart === true) {
+
+    
+    gameStarting();
+
+  } else if (gameLose === true) {
+    
+    
+    
+
+    gameLosing();
+    
+    numberOfBounces = 0;    
+  }
+  
+  // fill(255);
+  // rect(20, 0, 50, 500);
+
+};
+
+var gameStarting = function () {
+
+  background(70, 130, 117);
+  fill(0, 0, 255);
+  noStroke();
+  
+    
+  
+    movingWallsLeftb.x = leftWallx;
+    movingWallsLeftb.y = 0;
+
+    movingWallsLeftT.x = leftWallx;
+    movingWallsLeftT.y = -300;
+
+    movingWallsRightb.x = 500- rightWallw;
+    movingWallsRightb.x = -50;
+
+    movingWallsRightT.x = 500 - rightWallw;
+    movingWallsRightT.y = -350;
+
+    movingWallsMiddleb.x = middleWallx;
+    movingWallsMiddleb.y = -80;
+
+    movingWallsMiddleT.x = middleWallx;
+    movingWallsMiddleT.y = -380;
+
+  var terrence = loadImage("terrence_(3).jpg");
+  image(terrence, 30, 0, 470, 470);
+
+  if (numberOfBounces > 15) {
+    terrenceMad = 1;
+    var terrence2 = loadImage("terrence_(2)_LI.jpg");
+    image(terrence2, 50, 80, 200, 300);
+  }
+  
+
+
+
+
+
+  drawWalls();
+
+
+  drawMovingWalls();
+  moveMovingWalls();
+
+  //this is to draw the player
+  fill(120, 70, 200);
+  rect(player.xPosition, player.yPosition, player.w, player.h);
+
+  move(player, speed);
+
+  fill(255, 255, 255);
+  textSize(20);
+  text("Number of Bounces: " + numberOfBounces, 10, 490);
+
+  fill(255, 0, 0);
+  
+  setScore = 0;
+
+};
+
+
+var drawGameStart = function () {
+  //background
+  noStroke();
+  fill(255, 0, 120);
+  rect(0, gameStartRect, 500, 500);
+
+  //Title
+    fill(255, 280, 0);
+  textSize(50);
+  text("Cube Jump", 103, 103);
+  fill(255, 200, 0);
+  textSize(50);
+  text("Cube Jump", 100, 100);
+
+
+  // outer square
+  if (!innerSquareClicked) {
+    fill(0, 209, 202);
+  } else if (innerSquareClicked) {
+    fill(240, 240, 240);
+  }
+
+  rect(110, 230, 275, 85);
+
+
+  // inner square
+  if (!innerSquareClicked) {
+    fill(0, 255, 247);
+  } else if (innerSquareClicked) {
+    fill(255, 255, 255);
+  }
+
+  rect(117.5, 237.5, 260, 70);
+
+  //press to play
+  fill(0, 0, 0);
+  textSize(30);
+  text("Press to Play", 160, 280);
+};
+
+var drawMovingWalls = function () {
+  fill(0, 0, 255);
+
+
+  if (terrenceMad > 0 && randomRedBlocks < 11) {
+    noFill();
+    movewallRbMad = 1;
+    
+  } else {
+    fill(0, 0, 255);
+  }
+  rect(movingWallsRightb[0].xPosition, movingWallsRightb[0].yPosition, rightWallw, movingWallsRightb[0].h);
+  if (terrenceMad > 0 && randomRedBlocks > 10 && randomRedBlocks < 21) {
+    noFill();
+    movewallRtMad = true;
+    
+  } else {
+    fill(0, 0, 255);
+  }
+  rect(movingWallsRightT[0].xPosition, movingWallsRightT[0].yPosition, rightWallw2, movingWallsRightT[0].h);
+  if (terrenceMad > 0 && randomRedBlocks > 20 && randomRedBlocks < 31) {
+    noFill();
+    movewallLbMad = true;
+    
+  } else {
+    fill(0, 0, 255);
+  }
+  rect(movingWallsLeftb[0].xPosition, movingWallsLeftb[0].yPosition, leftWallw, movingWallsLeftb[0].h);
+  if (terrenceMad > 0 && randomRedBlocks > 30 && randomRedBlocks < 41) {
+    noFill();
+    movewallLtMad = true;
+    
+  } else {
+    fill(0, 0, 255);
+  }
+  rect(movingWallsLeftT[0].xPosition, movingWallsLeftT[0].yPosition, leftWallw2, movingWallsLeftT[0].h);
+  if (terrenceMad > 0 && randomRedBlocks > 40 && randomRedBlocks < 51) {
+    noFill();
+    movewallMbMad = true;
+    
+  } else {
+    fill(0, 0, 255);
+  }
+  rect(movingWallsMiddleb[0].xPosition, movingWallsMiddleb[0].yPosition, middleWallw, movingWallsMiddleb[0].h);
+  if (terrenceMad > 0 && randomRedBlocks > 50 && randomRedBlocks < 61) {
+    noFill();
+    movewallMtMad = true;
+    
+  } else {
+    fill(0, 0, 255);
+  }
+  rect(movingWallsMiddleT[0].xPosition, movingWallsMiddleT[0].yPosition, middleWallw2, movingWallsMiddleT[0].h);
+};
+
+var drawWalls = function () {
+  for (var a = 0; a < walls.length; a++) {
+    rect(walls[a].xPosition,
+      walls[a].yPosition,
+      walls[a].w,
+      walls[a].h);
+  }
+};
+
+//this is the function to have my player move
+var move = function (player, speed) {
+
+  if (left === 1) {
+    player.xPosition = player.xPosition - speed2;
+
+    for (var i = 0; i < walls.length; i++) {
+      while (collision(player, walls[i])) {
+        player.xPosition += 0.1;
+        player.yPosition -= 0.01;
+      }
+    }
+  }
+
+
+  if (right === 1) {
+    player.xPosition = player.xPosition + speed2;
+
+    for (var s = 0; s < walls.length; s++) {
+      while (collision(player, walls[s])) {
+        player.xPosition = player.xPosition - 1;
+        player.yPosition = player.yPosition - 0.1;
+      }
+    }
+  }
+
+
+  player.yPosition += gravity;
+
+
+  if (player.yPosition < 450) {
+
+    gravity += fallAcceleration;
+  }
+  for (var v = 0; v < walls.length; v++) {
+    while (collision(walls[v], player)) {
+      player.yPosition = player.yPosition - 0.01;
+      gravity = jumpHeight;
+      bouncesTilReset+=1;
+    }
+  }
+
+  movingWallsCollisions(player, speed);
+
+
+  for (var ga = 0; ga < walls.length; ga++) {
+    if (player.yPosition > 449 && bouncesTilReset > 581) {
+      gameStart = false;
+      gameLose = true;
+    }
+  }
+
+};
+
+
+
+var movingWallsCollisions = function (player, speed) {
+  
+  for (var cw = 0; cw < movingWallsLeftb.length; cw++) {
+    if (gravity > 0 && collision(player, movingWallsLeftb[cw]) && !movewallLbMad) {
+      player.yPosition -= 0.01;
+      gravity = jumpHeight;
+      numberOfBounces += 1;
+    } else if (gravity > 0 && collision(player, movingWallsLeftb[cw]) && movewallLbMad) {
+      gameLose = true;
+    }
+  }
+  for (var m = 0; m < movingWallsLeftT.length; m++) {
+    if (gravity > 0 && collision(player, movingWallsLeftT[m]) && !movewallLtMad) {
+      player.yPosition -= 0.01;
+      gravity = jumpHeight;
+      numberOfBounces += 1;
+    } else if (gravity > 0 && collision(player, movingWallsLeftb[m]) && movewallLtMad) {
+      gameLose = true;
+    }
+
+  }
+
+  for (var y = 0; y < movingWallsRightb.length; y++) {
+    if (gravity > 0 && collision(player, movingWallsRightb[y]) && !movewallRbMad) {
+      player.yPosition -= 0.01;
+      gravity = jumpHeight;
+      numberOfBounces += 1;
+    } else if (gravity > 0 && collision(player, movingWallsLeftb[y]) && movewallRbMad) {
+      gameLose = true;
+    }
+  }
+
+  for (var k = 0; k < movingWallsRightT.length; k++) {
+    if (gravity > 0 && collision(player, movingWallsRightT[k]) && !movewallRtMad) {
+      player.yPosition -= 0.01;
+      gravity = jumpHeight;
+      numberOfBounces += 1;
+    } else if (gravity > 0 && collision(player, movingWallsLeftb[k]) && movewallRtMad) {
+      gameLose = true;
+    }
+
+  }
+
+  for (var u = 0; u < movingWallsMiddleb.length; u++) {
+    if (gravity > 0 && collision(player, movingWallsMiddleb[u]) && !movewallMbMad) {
+      player.yPosition -= 0.01;
+      gravity = jumpHeight;
+      numberOfBounces += 1;
+    } else if (gravity > 0 && collision(player, movingWallsLeftb[u]) && movewallMbMad) {
+      gameLose = true;
+    }
+  }
+
+  for (var f = 0; f < movingWallsMiddleT.length; f++) {
+    if (gravity > 0 && collision(player, movingWallsMiddleT[f]) && !movewallMtMad) {
+      player.yPosition -= 0.01;
+      gravity = jumpHeight;
+      numberOfBounces += 1;
+    } else if (gravity > 0 && collision(player, movingWallsLeftb[f]) && movewallMtMad) {
+      gameLose = true;
+    }
+
+  }
+};
+
+
+var moveMovingWalls = function () {
+
+  if(movingWallsLeftb[0].yPosition > 469) {
+    leftWallw = floor(random(30, 80));
+    leftWallx = floor(random(70, 100));
+    console.log(leftWallx);
+  }
+  
+  if(movingWallsLeftT[0].yPosition > 469) {
+    leftWallw2 = floor(random(30, 80));
+    leftWallx2 = floor(random(70, 100));
+    console.log(leftWallx2)
+  }
+  
+  if(movingWallsRightb[0].yPosition > 469) {
+    rightWallw = floor(random(30, 80));
+    // console.log(movingWallsRightb[0].xPosition)
+  }
+  
+  if(movingWallsRightT[0].yPosition > 469) {
+    rightWallw2 = floor(random(30, 80));
+    // console.log(movingWallsRightT[0].xPosition)
+  }
+  
+  if(movingWallsMiddleb[0].yPosition > 469) {
+    middleWallw = floor(random(30, 100));
+    var middleWallx = leftWallx + leftWallw + floor(random(20,60));
+    // console.log(movingWallsMiddleb[0].xPosition)
+  }
+  
+  if(movingWallsMiddleT[0].yPosition > 469) {
+    middleWall2 = floor(random(30, 80));
+    var middleWallx2 = leftWallx + leftWallw + floor(random(20,60));
+    // console.log(movingWallsMiddleT[0].xPosition)
+  }
+  
+  // leftWallx = floor(random(70, 100));
+
+  // rightWallw = floor(random(100, 200));
+
+  // middleWallw = floor(random(50, 100));
+
+  for (var i = 0; i < movingWallsRightb.length; i++) {
+    if (movingWallsRightb[i].dir === 'y') {
+      movingWallsRightb[i].yPosition += movingWallsRightb[i].spd;
+    }
+
+  }
+
+  for (var t = 0; t < movingWallsRightT.length; t++) {
+    if (movingWallsRightT[t].dir === 'y') {
+      movingWallsRightT[t].yPosition += movingWallsRightb[t].spd;
+    }
+
+  }
+
+  for (var p = 0; p < movingWallsLeftb.length; p++) {
+    if (movingWallsLeftb[p].dir === 'y') {
+      movingWallsLeftb[p].yPosition += movingWallsLeftb[p].spd;
+    }
+
+  }
+
+  for (var ji = 0; ji < movingWallsLeftT.length; ji++) {
+    if (movingWallsLeftT[ji].dir === 'y') {
+      movingWallsLeftT[ji].yPosition += movingWallsLeftT[ji].spd;
+    }
+
+  }
+
+  for (var l = 0; l < movingWallsMiddleb.length; l++) {
+    if (movingWallsMiddleb[l].dir === 'y') {
+      movingWallsMiddleb[l].yPosition += movingWallsMiddleb[l].spd;
+    }
+
+  }
+
+  for (var li = 0; li < movingWallsMiddleT.length; li++) {
+    if (movingWallsMiddleT[li].dir === 'y') {
+      movingWallsMiddleT[li].yPosition += movingWallsMiddleT[li].spd;
+    }
+
+  }
+
+
+  resetMovingWalls();
+
+
+
+
+};
+
+var resetMovingWalls = function () {
+  for (var ri = 0; ri < movingWallsLeftb.length; ri++) {
+    if (movingWallsLeftb[ri].yPosition > 470) {
+      movingWallsLeftb[ri].yPosition = movingWallsLeftb[ri].yPosition - 550;
+    }
+  }
+
+  for (var fi = 0; fi < movingWallsLeftT.length; fi++) {
+    if (movingWallsLeftT[fi].yPosition > 470) {
+      movingWallsLeftT[fi].yPosition = movingWallsLeftT[fi].yPosition - 550;
+    }
+  }
+
+
+
+  for (var si = 0; si < movingWallsRightT.length; si++) {
+    if (movingWallsRightT[si].yPosition > 470) {
+      movingWallsRightT[si].yPosition = movingWallsRightT[si].yPosition - 550;
+    }
+  }
+
+  for (var di = 0; di < movingWallsRightb.length; di++) {
+    if (movingWallsRightb[di].yPosition > 470) {
+      movingWallsRightb[di].yPosition = movingWallsRightb[di].yPosition - 550;
+    }
+  }
+
+
+  for (var vi = 0; vi < movingWallsMiddleb.length; vi++) {
+    if (movingWallsMiddleb[vi].yPosition > 470) {
+      movingWallsMiddleb[vi].yPosition = movingWallsMiddleb[vi].yPosition - 550;
+    }
+  }
+
+  for (var qi = 0; qi < movingWallsMiddleT.length; qi++) {
+    if (movingWallsMiddleT[qi].yPosition > 470) {
+      movingWallsMiddleT[qi].yPosition = movingWallsMiddleT[qi].yPosition - 550;
+    }
+  }
+
+}
+
+
+var collision = function (obj1, obj2) {
+
+  if (obj1.xPosition + obj1.w > obj2.xPosition &&
+    obj1.xPosition < obj2.xPosition + obj2.w &&
+    obj2.yPosition + obj2.h > obj1.yPosition &&
+    obj2.yPosition < obj1.yPosition + obj1.h) {
+    return true;
+  } else {
+    return false;
+  }
+
+};
+
+
+var gameLosing = function () {
+  //background
+  noStroke();
+  fill(255, 0, 0);
+  rect(0, 0, 500, 500);
+
+  //You Lose
+  fill(255, 200, 0);
+  textSize(50);
+  text("You Lose", 150, 100);
+
+  // outer square
+  if (!innerSquareClicked) {
+    fill(0, 209, 202);
+  } else if (innerSquareClicked) {
+    fill(240, 240, 240);
+  }
+
+  rect(110, 230, 275, 85);
+
+
+  // inner square
+  if (!innerSquareClicked) {
+    fill(0, 255, 247);
+  } else if (innerSquareClicked) {
+    fill(255, 255, 255);
+  }
+
+  rect(117.5, 237.5, 260, 70);
+
+  //press to play
+  fill(0, 0, 0);
+  textSize(30);
+  text("Play Again?", 160, 280);
+  
+   setScore += numberOfBounces;
+  
+  //Score
+  text("Score: " + setScore, 170, 170)
+  
+};
+
+
+var mouseClicked = function () {
+  if (mouseX > 119 && mouseX < 381 &&
+    mouseY > 239 && mouseY < 311) {
+    innerSquareClicked = true
+    //start game
+  }
+}
+
+var mouseReleased = function () {
+  if (mouseX > 119 && mouseX < 381 &&
+    mouseY > 239 && mouseY < 311) {
+    gameStart = true
+    gameLose = false
+    //start game
+  }
+}
+
+var keyPressed = function () {
+  if (keyCode == LEFT) {
+    left = 1;
+  }
+  if (keyCode == RIGHT) {
+    right = 1;
+  }
+};
+
+var keyReleased = function () {
+  if (keyCode == LEFT) {
+    left = 0;
+  }
+  if (keyCode == RIGHT) {
+    right = 0;
+  }
+};
+
+        }
+    }
+
+    var canvas = document.getElementById("mycanvas"); 
+    var processingInstance = new Processing(canvas, sketchProc); 
+
+</script>
+    </body>
+</html>
